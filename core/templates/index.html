@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>here are your todos</title>
+</head>
+<body>
+    <strong> Add your todo </strong>
+    <form method="post" action="{%url 'index'%}">
+        {%csrf_token%}
+        <input type="text" name="todo">
+        <button type="submit">add</button>
+    </form>
+    <strong> here are your todos</strong><br>
+    <ul>
+        {%if not todo%}
+        <h1> there are no todos here you might considering addisng some todo</h1>
+        {%else%}
+        {%for todo in todo%}
+        <li>{{todo.todo}}</li>
+        {%endfor%}
+        {%endif%}
+    </ul>
+</body>
+</html>
