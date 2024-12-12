@@ -3,24 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>here are your todos</title>
+    <title>Professional Todo App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        button:hover {
+            background-color: #3a7bc8;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        li:hover {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
 </head>
 <body>
-    <strong> Add your todo </strong>
-    <form method="post" action="{%url 'index'%}">
-        {%csrf_token%}
-        <input type="text" name="todo">
-        <button type="submit">add</button>
-    </form>
-    <strong> here are your todos</strong><br>
-    <ul>
-        {%if not todo%}
-        <h1> there are no todos here you might considering addisng some todo</h1>
-        {%else%}
-        {%for todo in todo%}
-        <li>{{todo.todo}}</li>
-        {%endfor%}
-        {%endif%}
-    </ul>
+    <div class="container fade-in">
+        <h1>My Todo List</h1>
+        <form method="post" action="{% url 'index' %}">
+            {% csrf_token %}
+            <input type="text" name="todo" placeholder="Add a new todo" required>
+            <button type="submit">Add</button>
+        </form>
+        <ul>
+            {% if not todo %}
+                <p class="empty-state">Your todo list is empty. Add some tasks to get started!</p>
+            {% else %}
+                {% for todo_item in todo %}
+                    <li class="fade-in" style="animation-delay: {{ forloop.counter0 }}00ms;">
+                        {{ todo_item.todo }}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const input = document.querySelector('input[name="todo"]');
+            const list = document.querySelector('ul');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (input.value.trim()) {
+                    const li = document.createElement('li');
+                    li.textContent = input.value;
+                    li.classList.add('fade-in');
+                    list.appendChild(li);
+                    input.value = '';
+                    
+                    if (list.querySelector('.empty-state')) {
+                        list.querySelector('.empty-state').remove();
+                    }
+
+                    // Submit the form
+                    this.submit();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
